@@ -726,7 +726,10 @@ function renderDiary(){
   const mr=$e('div','mood-row');
   MOODS.forEach((m,i)=>{const b=$e('button','mood-btn'+(i===entry.mood?' sel':''));b.textContent=m;b.addEventListener('click',()=>{entry.mood=i;mr.querySelectorAll('.mood-btn').forEach((mb,j)=>mb.classList.toggle('sel',j===i));fsSaveDiary(key,{...entry});});mr.appendChild(b);});v.appendChild(mr);
   const ta=$e('textarea','diary-area g');ta.placeholder='今日のことを書こう…';ta.value=entry.text;ta.id='diary-ta';
-  let saveTimer=null;ta.addEventListener('input',()=>{entry.text=ta.value;clearTimeout(saveTimer);saveTimer=setTimeout(()=>fsSaveDiary(key,{...entry}),800);});v.appendChild(ta);
+  let saveTimer=null;
+  ta.addEventListener('input',()=>{entry.text=ta.value;clearTimeout(saveTimer);saveTimer=setTimeout(()=>fsSaveDiary(key,{...entry}),3000);});
+  ta.addEventListener('blur',()=>{clearTimeout(saveTimer);if(entry.text!==undefined)fsSaveDiary(key,{...entry});});
+  v.appendChild(ta);
   const tr=$e('div','diary-tags');
   DIARY_TAGS.forEach(tag=>{const b=$e('button','diary-tag'+((entry.tags||[]).includes(tag)?' sel':''));b.textContent=tag;b.addEventListener('click',()=>{if(!entry.tags)entry.tags=[];const idx=entry.tags.indexOf(tag);if(idx>=0)entry.tags.splice(idx,1);else entry.tags.push(tag);b.classList.toggle('sel',entry.tags.includes(tag));fsSaveDiary(key,{...entry});});tr.appendChild(b);});v.appendChild(tr);
   const keys=Object.keys(S.diary).filter(k=>S.diary[k].text&&k!==key).sort().reverse().slice(0,8);
